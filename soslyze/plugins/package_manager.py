@@ -1,8 +1,9 @@
-import re
 import os
 from pathlib import Path
+import re
 
-from soslyze.utils import print_value, parse_text
+from soslyze.utils import parse_text
+from soslyze.utils import print_value
 
 
 class Rpm:
@@ -18,13 +19,14 @@ class Rpm:
                              .format(split[0], split[3], split[4]))
         self.rpms = '\n'.join(sorted(lines))
         lines.clear()
-        tmp = Path(path + '/etc/yum.repos.d/redhat.repo')\
-            .read_text().splitlines()
-        for i in range(len(tmp)):
-            if re.search(r".*enabled *= *1.*", tmp[i]):
-                lines.append(tmp[i-3])
-                lines.append(tmp[i-1])
-                lines.append(tmp[i])
+        if os.path.isfile(path + '/etc/yum.repos.d/redhat.repo'):
+            tmp = Path(path + '/etc/yum.repos.d/redhat.repo')\
+                  .read_text().splitlines()
+            for i in range(len(tmp)):
+                if re.search(r".*enabled *= *1.*", tmp[i]):
+                    lines.append(tmp[i-3])
+                    lines.append(tmp[i-1])
+                    lines.append(tmp[i])
         self.urls = '\n'.join(lines)
         lines.clear()
 
