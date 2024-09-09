@@ -1,3 +1,7 @@
+import argparse
+import os
+from pathlib import Path
+import re
 from soslyze.plugins.discovery import Discovery
 from soslyze.plugins.insights import Insights
 from soslyze.plugins.os import Rhel8, Rhel7
@@ -5,61 +9,61 @@ from soslyze.plugins.package_manager import Dnf, Yum
 from soslyze.plugins.rhui import Rhui
 from soslyze.plugins.satellite import Satellite
 from soslyze.plugins.subscription_manager import SubscriptionManager
-from soslyze.utils import Style, package_present, print_warning
-import sys
-import os
-from pathlib import Path
-import re
+from soslyze.utils import package_present
 
 
 class SoSLyze:
+
+    def valid_path(self, path):
+        if os.path.exists(path + '/sos_reports'):
+            return path
+        else:
+            raise argparse.ArgumentTypeError(
+                f"'{path}' is not a valid sosreport path.\n"
+            )
+
     def __init__(self):
         """
         Initialization of SoSLyze
         """
-        if len(sys.argv) > 1:
-            inputpath = sys.argv[1]
-        else:
-            inputpath = "."
-
-        if os.path.isdir(inputpath):
-            if os.path.isdir(inputpath + '/sos_reports'):
-                self.path = inputpath
-            else:
-                print_warning(
-                    f"'{inputpath}' is not a valid sosreport archive.")
-                print("Example: soslyze /path/to/sosreport")
-                exit()
-        else:
-            print_warning(f"'{inputpath}' is not a folder.")
-            print("Example: soslyze /path/to/sosreport")
-            exit()
+        self.parser = argparse.ArgumentParser(
+            description="Summarize SysMgmt/Subscription Management/Insights "
+                        + "data from an extracted sosreport archive."
+            )
+        self.parser.add_argument(
+            'path',
+            help='Path to sosreport. Default: `./`.',
+            default=os.getcwd(),
+            type=self.valid_path,
+            nargs='?'
+            )
+        self.args = self.parser.parse_args()
 
         if len(re.findall('8[.]', Path(
-                self.path + '/etc/redhat-release').read_text())) == 1 or \
+                self.args.path + '/etc/redhat-release').read_text())) == 1 or \
                 len(re.findall('9[.]', Path(
-                    self.path + '/etc/redhat-release').read_text())) == 1:
-            self.os = Rhel8(self.path)
+                    self.args.path + '/etc/redhat-release').read_text())) == 1:
+            self.os = Rhel8(self.args.path)
         elif len(re.findall('6[.]', Path(
-                self.path + '/etc/redhat-release').read_text())) == 1 or \
+                self.args.path + '/etc/redhat-release').read_text())) == 1 or \
                 len(re.findall('7[.]', Path(
-                    self.path + '/etc/redhat-release').read_text())) == 1:
-            self.os = Rhel7(self.path)
+                    self.args.path + '/etc/redhat-release').read_text())) == 1:
+            self.os = Rhel7(self.args.path)
 
-        if package_present(self.path, "dnf"):
-            self.package_manager = Dnf(self.path)
-        elif package_present(self.path, "yum"):
-            self.package_manager = Yum(self.path)
-        if package_present(self.path, "subscription-manager"):
-            self.subscription_manager = SubscriptionManager(self.path)
-        if package_present(self.path, "insights-client"):
-            self.insights = Insights(self.path)
-        if package_present(self.path, "satellite"):
-            self.satellite = Satellite(self.path)
-        if os.path.isfile(self.path + "/etc/rhui/rhui-tools.conf"):
-            self.rhui = Rhui(self.path)
-        if os.path.isdir(self.path + "/sos_commands/discovery"):
-            self.discovery = Discovery(self.path)
+        if package_present(self.args.path, "dnf"):
+            self.package_manager = Dnf(self.args.path)
+        elif package_present(self.args.path, "yum"):
+            self.package_manager = Yum(self.args.path)
+        if package_present(self.args.path, "subscription-manager"):
+            self.subscription_manager = SubscriptionManager(self.args.path)
+        if package_present(self.args.path, "insights-client"):
+            self.insights = Insights(self.args.path)
+        if package_present(self.args.path, "satellite"):
+            self.satellite = Satellite(self.args.path)
+        if os.path.isfile(self.args.path + "/etc/rhui/rhui-tools.conf"):
+            self.rhui = Rhui(self.args.path)
+        if os.path.isdir(self.args.path + "/sos_commands/discovery"):
+            self.discovery = Discovery(self.args.path)
 
     def output(self):
         self.os.output()
