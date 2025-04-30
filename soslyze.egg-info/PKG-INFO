@@ -1,0 +1,36 @@
+Metadata-Version: 2.1
+Name: soslyze
+Version: 0.0.0
+Summary: Summarize SysMgmt/Subscription Management/Insights
+Home-page: https://github.com/JanSenkyrik/soslyze
+Author: Jan Senkyrik
+License: GPLv3
+Keywords: sosreport sos
+Classifier: Intended Audience :: Information Technology
+Classifier: Intended Audience :: System Administrators
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Operating System :: POSIX :: Linux
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.11
+Description-Content-Type: text/markdown
+
+# soslyze
+
+Summarize SysMgmt/Subscription Management/Insights data from an extracted sosreport archive.
+
+Optionally call memory & CPU analysis from xsos.
+
+Usage:
+
+```
+# bin/soslyze /path/to/sosreport
+```
+----------------------------------------------------------
+
+sosreport is an extensible, portable, support data collection tool primarily
+aimed at Linux distributions and other UNIX-like operating systems.
+
+The sosreport project is hosted at:
+
+  * https://github.com/sosreport/sos
