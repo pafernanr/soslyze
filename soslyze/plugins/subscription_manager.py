@@ -13,9 +13,8 @@ from soslyze.utils import print_value
 class SubscriptionManager:
     def __init__(self, path):
         lines = []
-        ent_start = '-----BEGIN ENTITLEMENT DATA-----'
+        ent_begin = '-----BEGIN ENTITLEMENT DATA-----'
         ent_end = '-----END ENTITLEMENT DATA-----'
-        # "1.3.6.1.4.1.2312.9"
         if os.path.isfile(path + '/etc/rhsm/rhsm.conf'):
             self.platform = parse_text(
                 path + '/etc/rhsm/rhsm.conf',
@@ -30,11 +29,10 @@ class SubscriptionManager:
                 with open(f"{path}/etc/pki/entitlement/{certname}",
                           encoding="utf-8") as f:
                     pem = re.findall(
-                        f'{ent_start}(.*?){ent_end}', f.read(), re.DOTALL)
+                        f'{ent_begin}(.*?){ent_end}', f.read(), re.DOTALL)
                     b64 = base64.b64decode(pem[0])
                     decompressed = zlib.decompress(b64).decode('utf-8')
                     j = json.loads(decompressed)
-                    # dict_keys(['consumer', 'subscription', 'order', 'products', 'pool'])
                     if "subscription" in j and "sku" in j['subscription']:
                         self.content_access = True
                         break
