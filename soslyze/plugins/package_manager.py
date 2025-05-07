@@ -17,7 +17,7 @@ class Rpm:
                 split = line.split('\t')
                 lines.append('{:75s}| {:30s}| {:50s}'
                              .format(split[0], split[3], split[4]))
-        self.rpms = '\n'.join(sorted(lines))
+        self.rpms = '\n'.join(lines[0:2]) + '\n' + '\n'.join(sorted(lines[3:]))
         lines.clear()
         if os.path.isfile(path + '/etc/yum.repos.d/redhat.repo'):
             tmp = Path(path + '/etc/yum.repos.d/redhat.repo')\
