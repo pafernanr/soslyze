@@ -86,3 +86,11 @@ class Rhel7(Rhel):
 
     def output(self):
         super().output()
+
+
+class UnknownOS(Rhel):
+    def __init__(self, path):
+        super().__init__(path)
+
+    def output(self):
+        super().output()

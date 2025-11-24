@@ -6,6 +6,7 @@ from soslyze.plugins.discovery import Discovery
 from soslyze.plugins.insights import Insights
 from soslyze.plugins.os import Rhel7
 from soslyze.plugins.os import Rhel8
+from soslyze.plugins.os import UnknownOS
 from soslyze.plugins.package_manager import Dnf
 from soslyze.plugins.package_manager import Yum
 from soslyze.plugins.rhui import Rhui
@@ -17,7 +18,8 @@ from soslyze.utils import package_present
 class SoSLyze:
 
     def valid_path(self, path):
-        if os.path.exists(path + '/sos_reports'):
+        print(f"{path}/sos_reports")
+        if os.path.exists(f"{path}/sos_reports"):
             return path
         else:
             raise argparse.ArgumentTypeError(
@@ -52,11 +54,16 @@ class SoSLyze:
                     f"{self.args.path}/etc/redhat-release")
                     .read_text(encoding="utf-8"))) == 1:
             self.os = Rhel7(self.args.path)
+        else:
+            self.os = UnknownOS(self.args.path)
 
-        if package_present(self.args.path, "dnf"):
-            self.package_manager = Dnf(self.args.path)
-        elif package_present(self.args.path, "yum"):
-            self.package_manager = Yum(self.args.path)
+        try:
+            if package_present(self.args.path, "dnf"):
+                self.package_manager = Dnf(self.args.path)
+            elif package_present(self.args.path, "yum"):
+                self.package_manager = Yum(self.args.path)
+        except Exception as e:
+            print(f"ERROR package_manager: {e}")
         if package_present(self.args.path, "subscription-manager"):
             self.subscription_manager = SubscriptionManager(self.args.path)
         if package_present(self.args.path, "insights-client"):
