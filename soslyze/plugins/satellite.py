@@ -119,6 +119,18 @@ class Satellite:
             self.db_facts = "\n".join(Path(
                 path + "/sos_commands/foreman/fact_names_prefixes")
                                       .read_text().splitlines()[0:10])
+        if os.path.isfile(
+                path + "/var/lib/foreman-maintain/satellite_metrics.yml"):
+            self.settings = Path(
+                path + "/var/lib/foreman-maintain/satellite_metrics.yml"
+            ).read_text().splitlines()[1]
+            self.metrics = parse_text(
+                path + "/var/lib/foreman-maintain/satellite_metrics.yml",
+                r".*(hosts_by_managed_count|total_users_count" +
+                "|custom_roles_count|modified_settings|hosts_by_os_count" +
+                "|ldap_auth_source_free_ipa_count|ldap_auth_source_posix_count" +
+                "|ldap_auth_source_active_directory_count|smart_proxies_count" +
+                "|total_users_count|non_admin_users_count|taxonomies_counts).*")
 
     def output(self):
         print_headline("### SATELLITE INFORMATION ###")
@@ -168,3 +180,5 @@ class Satellite:
             print_value("Candlepin db table sizes:", self.db_candlepin)
         if hasattr(self, "db_facts"):
             print_value("Fact names:", self.db_facts)
+        if hasattr(self, "metrics"):
+            print_value("Metrics:", self.metrics)    
