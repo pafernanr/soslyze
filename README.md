@@ -4,11 +4,20 @@ Summarize SysMgmt/Subscription Management/Insights data from an extracted sosrep
 
 Optionally call memory & CPU analysis from xsos.
 
-Usage:
+### Usage:
 
 ```
-# bin/soslyze /path/to/sosreport
+usage: soslyze [-h] [path]
+
+Summarize SysMgmt/Subscription Management/Insights data from an extracted sosreport archive.
+
+positional arguments:
+  path        Path to sosreport. Default: `./`.
+
+options:
+  -h, --help  show this help message and exit
 ```
+
 ----------------------------------------------------------
 
 sosreport is an extensible, portable, support data collection tool primarily
