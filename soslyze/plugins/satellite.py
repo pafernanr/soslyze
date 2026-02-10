@@ -181,4 +181,4 @@ class Satellite:
         if hasattr(self, "db_facts"):
             print_value("Fact names:", self.db_facts)
         if hasattr(self, "metrics"):
-            print_value("Metrics:", self.metrics)    
+            print_value("Usage Metrics:", self.metrics)    
