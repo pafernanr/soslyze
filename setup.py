@@ -10,7 +10,7 @@ def read(fname):
 
 setuptools.setup(
     name='soslyze',
-    version='1.0.0',
+    version='0.0.0',
     scripts=['soslyze/bin/__init__.py'],
     entry_points={
         'console_scripts': ['soslyze=soslyze.bin:main']
