@@ -23,7 +23,7 @@ def package_present(path, name):
     return result
 
 
-def parse_text(path, regex, options=re.NOFLAG):
+def parse_text(path, regex, options=0):
     lines = []
     try:
         for line in Path(path).read_text().splitlines():
