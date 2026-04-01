@@ -3,13 +3,12 @@ from pathlib import Path
 
 
 def print_headline(line):
-    print((Style.CYAN_BOLD + "{0}" + Style.RESET).format(line))
+    print((Style.NEW_LINE + Style.CYAN_BOLD + "{0}" + Style.RESET + Style.NEW_LINE).format(line))
 
 
 def print_value(line, value):
     print((Style.BLUE_BOLD + "{0}" + Style.RESET_NEW_LINE +
-           "{1}" + Style.NEW_LINE).format(line, value))
-
+           "{1}" + Style.NEW_LINE).format(line, value.rstrip()))
 
 def print_warning(line):
     print((Style.YELLOW_BOLD + "{0}" + Style.RESET).format(line))

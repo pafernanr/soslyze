@@ -12,13 +12,13 @@ from soslyze.plugins.package_manager import Yum
 from soslyze.plugins.rhui import Rhui
 from soslyze.plugins.satellite import Satellite
 from soslyze.plugins.subscription_manager import SubscriptionManager
-from soslyze.utils import package_present
+from soslyze.utils import package_present, print_warning
 
 
 class SoSLyze:
 
     def valid_path(self, path):
-        print(f"{path}/sos_reports")
+        print_warning(f"Using path: {path}")
         if os.path.exists(f"{path}/sos_reports"):
             return path
         else:
@@ -97,4 +97,4 @@ class SoSLyze:
             self.discovery.output()
 
 
-SoSLyze().output()
+#SoSLyze().output()

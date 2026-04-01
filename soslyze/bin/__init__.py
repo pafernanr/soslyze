@@ -12,7 +12,7 @@ except KeyboardInterrupt as exc:
 
 
 def main():
-    SoSLyze()
+    SoSLyze().output()
     os._exit(0)
 
 
