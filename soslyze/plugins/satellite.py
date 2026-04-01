@@ -56,13 +56,26 @@ class Satellite:
                 path + "/var/lib/pgsql/data/postgresql.conf",
                 r".*(max_connections|shared_buffers|work_mem" +
                 "|autovacuum_vacuum_cost_limit).*")
+#        if os.path.isfile(path + "/sos_commands/foreman/foreman_tasks_tasks"):
+#            self.tasks_running = Path(
+#                path + "/sos_commands/foreman/foreman_tasks_tasks")\
+#                .read_text().splitlines()[0]
+#            self.tasks_running = self.tasks_running + "\n" + parse_text(
+#                path + "/sos_commands/foreman/foreman_tasks_tasks",
+#                r".*running.*")
+
         if os.path.isfile(path + "/sos_commands/foreman/foreman_tasks_tasks"):
             self.tasks_running = Path(
                 path + "/sos_commands/foreman/foreman_tasks_tasks")\
                 .read_text().splitlines()[0]
-            self.tasks_running = self.tasks_running + "\n" + parse_text(
+            running_tasks = parse_text(
                 path + "/sos_commands/foreman/foreman_tasks_tasks",
                 r".*running.*")
+            # Exclude "Check for long running tasks" entries
+            filtered_tasks = "\n".join([line for line in running_tasks.split("\n")
+                                       if "CheckLongRunningTasks" not in line])
+            self.tasks_running = self.tasks_running + "\n" + filtered_tasks
+
             self.tasks_paused = Path(
                 path + "/sos_commands/foreman/foreman_tasks_tasks")\
                 .read_text().splitlines()[0]
@@ -121,7 +134,7 @@ class Satellite:
                                       .read_text().splitlines()[0:10])
         if os.path.isfile(
                 path + "/var/lib/foreman-maintain/satellite_metrics.yml"):
-            self.settings = Path(
+            self.metrics_header = Path(
                 path + "/var/lib/foreman-maintain/satellite_metrics.yml"
             ).read_text().splitlines()[1]
             self.metrics = parse_text(
