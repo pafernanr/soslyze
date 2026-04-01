@@ -28,8 +28,9 @@ class SoSLyze:
 
     def __init__(self):
         self.parser = argparse.ArgumentParser(
-            description="Summarize SysMgmt/Subscription Management/Insights "
-                        + "data from an extracted sosreport archive."
+            description="Summarize data from an extracted sosreport archive, "
+                        + "focusing on Red Hat Satellite, Subscription Management, "
+                        + "and Red Hat Insights (Lightspeed)."
             )
         self.parser.add_argument(
             'path',
