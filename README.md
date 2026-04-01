@@ -37,5 +37,5 @@ soslyze sosreport-hostname-2026-03-10-abc123/
 
 ----------------------------------------------------------
 
-[sosreport](https://github.com/sosreport/sos) is an extensible, portable, support data collection tool primarily
+[sos](https://github.com/sosreport/sos) is an extensible, portable, support data collection tool primarily
 aimed at Linux distributions and other UNIX-like operating systems.
