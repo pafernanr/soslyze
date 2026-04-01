@@ -8,6 +8,7 @@ import zlib
 from soslyze.utils import parse_text
 from soslyze.utils import print_headline
 from soslyze.utils import print_value
+from soslyze.utils import Style
 
 
 class SubscriptionManager:
@@ -15,13 +16,18 @@ class SubscriptionManager:
         lines = []
         ent_begin = '-----BEGIN ENTITLEMENT DATA-----'
         ent_end = '-----END ENTITLEMENT DATA-----'
+
         if os.path.isfile(path + '/etc/rhsm/rhsm.conf'):
             self.platform = parse_text(
                 path + '/etc/rhsm/rhsm.conf',
                 r"^(hostname|baseurl|port|repo_ca_cert|ca_cert_dir).*")
             self.proxy = parse_text(path + '/etc/rhsm/rhsm.conf', r"^proxy.*")
+
         if os.path.isfile(path + "/environment"):
             self.env_proxy = parse_text(path + "/environment", r".*proxy.*")
+        if not hasattr(self, "env_proxy") or not self.env_proxy:
+            self.env_proxy = f"{Style.GREY}No proxy references found, or the ./environment file is missing{Style.RESET}"
+        
         self.content_access = False
 
         if os.path.isdir(path + '/etc/pki/entitlement/'):
@@ -44,12 +50,20 @@ class SubscriptionManager:
                 "subscription-manager_list_--consumed",
                 r"^(Subscription Name|Subskriptionsname|Nom de l'abonnement|" +
                 "SKU|Start|Ends|Pool ID|Status Details).*")
+        if not hasattr(self, "consumed") or not self.consumed:
+            self.consumed = f"{Style.GREY}No subscriptions attached, or the subscription-manager_list_--consumed file is missing{Style.RESET}"
+
+
         if os.path.isdir(path + '/etc/rhsm/facts/'):
             for fact in os.listdir(path + '/etc/rhsm/facts/'):
+                if fact == 'leapp.facts':
+                    continue
+                lines.append(f"\n{Style.GREY}{fact}{Style.RESET}")
                 lines.append(Path(f"{path}/etc/rhsm/facts/{fact}")
                              .read_text(encoding="utf-8"))
             self.facts = '\n'.join(lines)
             lines.clear()
+
         if os.path.isfile(
                 path + "/sos_commands/subscription_manager/" +
                 "subscription-manager_identity"):
@@ -68,12 +82,12 @@ class SubscriptionManager:
         if hasattr(self, "env_proxy"):
             print_value("Proxy information (environment):", self.env_proxy)
         if hasattr(self, "content_access"):
-            print_value("SCA:", str(self.content_access))
+            print_value("SCA:", f"{Style.GREY}{str(self.content_access)}{Style.RESET}")
         if hasattr(self, "consumed"):
             print_value("Subscriptions attached:", self.consumed)
         if hasattr(self, "lfce"):
             print_value("CV, LFCE and organization:", self.lfce)
         if hasattr(self, "facts"):
-            print_value("Custom RHSM facts:", self.facts)
+            print_value("Custom RHSM facts (leapp.facts omitted):", self.facts)
         if hasattr(self, "uuid"):
             print_value("RHSM/DMI UUID:", self.uuid)

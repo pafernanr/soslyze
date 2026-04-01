@@ -4,6 +4,7 @@ import re
 
 from soslyze.utils import parse_text
 from soslyze.utils import print_value
+from soslyze.utils import Style
 
 
 class Rpm:
@@ -32,7 +33,7 @@ class Rpm:
 
     def output(self):
         print_value("Packages from 3rd party repositories:", self.rpms)
-        print_value("Repo URLs:", self.urls)
+        print_value("Repo URLs from redhat.repo:", self.urls)
 
 
 class Dnf(Rpm):
@@ -51,6 +52,8 @@ class Dnf(Rpm):
                 options=re.IGNORECASE)
         if os.path.isdir(path + '/etc/dnf/vars/'):
             self.vars = '\n'.join(os.listdir(path + '/etc/dnf/vars/'))
+        if not hasattr(self, "vars") or not self.vars:
+            self.vars = f"{Style.GREY}No yum/dnf variable files found in /etc{Style.RESET}"
 
     def output(self):
         super().output()
@@ -74,7 +77,12 @@ class Yum(Rpm):
                                  .splitlines()[0:15])
         self.exclude = parse_text(path + "/etc/yum.conf", r'.*exclude.*',
                                   options=re.IGNORECASE)
-        self.vars = '\n'.join(os.listdir(path + '/etc/yum/vars/'))
+
+        #self.vars = '\n'.join(os.listdir(path + '/etc/yum/vars/'))
+        if os.path.isdir(path + '/etc/yum/vars/'):
+            self.vars = '\n'.join(os.listdir(path + '/etc/yum/vars/'))
+        if not hasattr(self, "vars") or not self.vars:
+            self.vars = f"{Style.GREY}No yum/dnf variables found in /etc{Style.RESET}"
 
     def output(self):
         super().output()

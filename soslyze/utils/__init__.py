@@ -45,6 +45,7 @@ def parse_text_exclude(path, regex):
 
 
 class Style:
+    GREY = '\033[0;90m'
     GREEN = '\033[0;32m'
     GREEN_BOLD = '\033[0;32m\033[1m'
     RED = '\033[0;31m'
