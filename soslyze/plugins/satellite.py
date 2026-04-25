@@ -166,7 +166,7 @@ class Satellite:
                     ).read_text().splitlines():
                         if "Running foreman-maintain" in line:
                             l = line.translate({ord(i): None for i in '[]",'}).split(" ")
-                            if l[13] not in ["service", "health"]:
+                            if l[13] in ["service", "upgrade", "update"]:
                                 self.maintain.append(
                                     f"{l[1]}T{l[2]} foreman-maintain {" ".join(l[13:])}")
             self.maintain.sort(reverse=True)
